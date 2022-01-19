@@ -2967,14 +2967,17 @@ namespace OpenXmlPowerTools
                     var instrText = FieldRetriever.InstrText(g.First().Ancestors().Last(), (int)key)
                         .TrimStart('{').TrimEnd('}');
 
+                    //TODO: shouldnt REF be handled in ProcessHyperlinkToBookmark?
                     var parsed = FieldRetriever.ParseField(instrText);
-                    if (parsed.FieldType != "HYPERLINK")
+                    if (parsed.FieldType != "HYPERLINK" && parsed.FieldType != "REF")
                         return g.Select(n => ConvertToHtmlTransform(wordDoc, settings, n, false, 0m));
 
                     var content = g.DescendantsAndSelf(W.r).Select(run => ConvertRun(wordDoc, settings, run));
-                    var a = parsed.Arguments.Length > 0
-                        ? new XElement(Xhtml.a, new XAttribute("href", parsed.Arguments[0]), content)
+                    var attVal = (parsed.FieldType == "HYPERLINK") ? parsed.Arguments[0] : "#" + parsed.Arguments[0];
+                    var a = (parsed.Arguments.Length > 0) 
+                        ? new XElement(Xhtml.a, new XAttribute("href", attVal), content)
                         : new XElement(Xhtml.a, content);
+
                     var a2 = a as XElement;
                     if (!a2.Nodes().Any())
                     {
