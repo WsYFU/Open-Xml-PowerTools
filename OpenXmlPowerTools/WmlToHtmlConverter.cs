@@ -2969,7 +2969,8 @@ namespace OpenXmlPowerTools
 
                     //TODO: shouldnt REF be handled in ProcessHyperlinkToBookmark?
                     var parsed = FieldRetriever.ParseField(instrText);
-                    if (parsed.FieldType != "HYPERLINK" && parsed.FieldType != "REF")
+                    if ((parsed.FieldType != "HYPERLINK" && parsed.FieldType != "REF")
+                        || (parsed.FieldType == "REF" && !parsed.Switches.Contains("\\h")))
                         return g.Select(n => ConvertToHtmlTransform(wordDoc, settings, n, false, 0m));
 
                     var content = g.DescendantsAndSelf(W.r).Select(run => ConvertRun(wordDoc, settings, run));
