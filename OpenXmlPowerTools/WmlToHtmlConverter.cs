@@ -2922,12 +2922,13 @@ namespace OpenXmlPowerTools
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
         {
+
             if (FontFallback.ContainsKey(font))
             {
                 style.AddIfMissing("font-family", string.Format(FontFallback[font], font));
                 return;
             }
-            style.AddIfMissing("font-family", font);
+            style.AddIfMissing("font-family", string.Format(@"'{0}'", font));
         }
 
         private static bool GetBoolProp(XElement runProps, XName xName)
